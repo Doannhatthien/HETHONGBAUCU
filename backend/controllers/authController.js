@@ -26,25 +26,33 @@ exports.register = async (req, res, next) => {
 
         // Kiểm tra user đã tồn tại
         const existing = await User.findOne({ 
-            $or: [{ username }, { studentId }, { walletAddress: walletAddress.toLowerCase() }] 
+            $or: [{ username }, { studentId }] 
         });
 
         if (existing) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Username, Student ID, or Wallet Address already exists' 
+                message: 'Tên đăng nhập hoặc mã sinh viên đã tồn tại' 
             });
         }
 
+        // Tự động tạo wallet address nếu không có
+        let finalWalletAddress = walletAddress;
+        if (!finalWalletAddress) {
+            // Tạo wallet address ngẫu nhiên (trong thực tế nên dùng Web3)
+            const randomWallet = '0x' + Math.random().toString(16).substring(2, 42).padEnd(40, '0');
+            finalWalletAddress = randomWallet;
+        }
+
         // Kiểm tra nếu là admin
-        const isAdmin = walletAddress.toLowerCase() === (process.env.ADMIN_ADDRESS || '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266').toLowerCase();
+        const isAdmin = finalWalletAddress.toLowerCase() === (process.env.ADMIN_ADDRESS || '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266').toLowerCase();
         
         const user = await User.create({
             username, 
             password, 
             fullName, 
             studentId,
-            walletAddress: walletAddress.toLowerCase(),
+            walletAddress: finalWalletAddress.toLowerCase(),
             role: isAdmin ? 'admin' : 'student'
         });
 

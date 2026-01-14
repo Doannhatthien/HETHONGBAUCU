@@ -1,5 +1,7 @@
 // API Configuration
-const API_URL = 'http://localhost:5000/api';
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api'
+    : `http://${window.location.hostname}:5000/api`;
 
 // Khởi tạo
 document.addEventListener('DOMContentLoaded', function() {
@@ -14,22 +16,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Thiết lập sự kiện
 function setupEventListeners() {
-    // Chuyển đổi giữa đăng nhập và đăng ký
-    document.getElementById('switchToRegister')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        switchForm('register');
-    });
+    console.log('Setting up event listeners...');
     
-    document.getElementById('switchToLogin')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        switchForm('login');
-    });
+    // Chuyển đổi giữa đăng nhập và đăng ký
+    const switchToRegisterBtn = document.getElementById('switchToRegister');
+    const switchToLoginBtn = document.getElementById('switchToLogin');
+    
+    console.log('switchToRegister button:', switchToRegisterBtn);
+    console.log('switchToLogin button:', switchToLoginBtn);
+    
+    if (switchToRegisterBtn) {
+        switchToRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Switching to register form...');
+            switchForm('register');
+        });
+    }
+    
+    if (switchToLoginBtn) {
+        switchToLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Switching to login form...');
+            switchForm('login');
+        });
+    }
     
     // Submit form đăng nhập
-    document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
+    const loginForm = document.getElementById('loginFormElement');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
     
     // Submit form đăng ký
-    document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
+    const registerForm = document.getElementById('registerFormElement');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+    }
 }
 
 // Đăng nhập
@@ -77,14 +99,13 @@ async function handleLogin(e) {
 async function handleRegister(e) {
     e.preventDefault();
     
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const confirmPassword = document.getElementById('regConfirmPassword').value;
-    const fullName = document.getElementById('regFullName').value.trim();
-    const studentId = document.getElementById('regStudentId').value.trim();
-    const walletAddress = document.getElementById('regWalletAddress').value.trim();
+    const username = document.getElementById('registerUsername').value.trim();
+    const password = document.getElementById('registerPassword').value;
+    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+    const fullName = document.getElementById('registerFullName').value.trim();
+    const studentId = document.getElementById('registerStudentId').value.trim();
     
-    if (!username || !password || !fullName || !studentId || !walletAddress) {
+    if (!username || !password || !fullName || !studentId) {
         showMessage('Vui lòng điền đầy đủ thông tin!', 'error');
         return;
     }
@@ -109,8 +130,7 @@ async function handleRegister(e) {
                 username, 
                 password, 
                 fullName, 
-                studentId, 
-                walletAddress 
+                studentId
             })
         });
         
@@ -150,15 +170,22 @@ function logout() {
 
 // Chuyển đổi form
 function switchForm(formType) {
-    const loginSection = document.getElementById('loginSection');
-    const registerSection = document.getElementById('registerSection');
+    console.log('switchForm called with type:', formType);
+    
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    console.log('loginForm:', loginForm);
+    console.log('registerForm:', registerForm);
     
     if (formType === 'register') {
-        loginSection.style.display = 'none';
-        registerSection.style.display = 'block';
+        if (loginForm) loginForm.classList.add('hidden');
+        if (registerForm) registerForm.classList.remove('hidden');
+        console.log('Switched to register form');
     } else {
-        loginSection.style.display = 'block';
-        registerSection.style.display = 'none';
+        if (loginForm) loginForm.classList.remove('hidden');
+        if (registerForm) registerForm.classList.add('hidden');
+        console.log('Switched to login form');
     }
 }
 

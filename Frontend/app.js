@@ -296,7 +296,20 @@ function checkAuth() {
 
 // Initialize UI
 function initializeUI() {
-    // Hide tabs initially
+    // Force hide all tabs except voting tab on page load
+    const allTabs = ['voting', 'results', 'registration', 'admin'];
+    allTabs.forEach(tabId => {
+        const tab = document.getElementById(tabId);
+        if (tab) {
+            if (tabId === 'voting') {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        }
+    });
+    
+    // Hide tabs navigation initially
     document.getElementById('tabs').style.display = 'none';
     
     // Check if MetaMask is installed
@@ -879,17 +892,19 @@ async function addPosition() {
 
 // Utility functions
 function switchTab(tabName) {
-    // Update tab buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-    
-    // Update tab content
+    // Remove active from all tabs
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
+    
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Add active to selected tab
     document.getElementById(tabName).classList.add('active');
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     
     // Load data for specific tabs
     if (tabName === 'results') {

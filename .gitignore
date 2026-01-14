@@ -20,3 +20,18 @@ build/
 .idea/
 *.swp
 *.swo
+
+# Python virtual environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Temp files
+*.log
+*.tmp
+temp_*
+
+# OS files
+Thumbs.db
+.DS_Store

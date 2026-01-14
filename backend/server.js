@@ -15,7 +15,10 @@ connectDB().catch(err => console.log('MongoDB connection error:', err.message));
 // Middleware
 app.use(express.json());
 app.use(helmet());
-app.use(cors({ origin: ['http://localhost:8000', 'http://localhost:8080'], credentials: true }));
+app.use(cors({ 
+    origin: true, // Cho phép tất cả origins trong development
+    credentials: true 
+}));
 app.use(morgan('dev'));
 app.use('/api/', rateLimit({ windowMs: 10 * 60 * 1000, max: 100 }));
 
@@ -40,7 +43,11 @@ app.use((req, res) => res.status(404).json({ success: false, message: 'Route not
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on:`);
+    console.log(`   - Local:   http://localhost:${PORT}`);
+    console.log(`   - Network: http://172.20.10.7:${PORT}`);
+});
 
 process.on('unhandledRejection', (err) => {
     console.log(`❌ Error: ${err.message}`);

@@ -16,7 +16,7 @@ timeout /t 3
 
 REM Khoi dong Frontend
 echo [3/3] Khoi dong Frontend Server...
-start "Frontend Server" cmd /k "cd /d %~dp0\contracts\Frontend && npm run serve"
+start "Frontend Server" cmd /k "cd /d %~dp0\Frontend && npx http-server -p 8000 -a 0.0.0.0"
 timeout /t 2
 
 echo.
@@ -27,6 +27,7 @@ echo.
 echo - Blockchain: http://127.0.0.1:8545
 echo - Backend:    http://localhost:5000
 echo - Frontend:   http://localhost:8000
+echo - Frontend (Network): http://172.21.2.180:8000
 echo.
-echo Nhan phim bat ky de dong cua so nay...
-pause > nul
+echo Tat ca dich vu da khoi dong thanh cong!
+echo Ban co the dong cua so nay.

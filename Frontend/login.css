@@ -5,33 +5,29 @@
 }
 
 :root {
-    /* Màu sắc chính - Cam, Hồng, Đỏ, Xanh lá */
-    --orange: #FF6B35;
-    --orange-light: #FF8C61;
-    --orange-dark: #E65100;
-    --pink: #FF4D8F;
-    --pink-light: #FF80AB;
-    --pink-dark: #C51162;
-    --red: #FF1744;
-    --red-light: #FF5252;
-    --red-dark: #D50000;
-    --green: #00E676;
-    --green-light: #69F0AE;
-    --green-dark: #00C853;
+    /* Bảng màu chuyên nghiệp - Đen, Trắng, Vàng, Xanh lá */
+    --yellow: #FFD700;         /* Vàng chủ đạo */
+    --yellow-light: #FFED4E;   /* Vàng nhạt */
+    --yellow-dark: #FFA500;    /* Vàng đậm */
+    --green: #4CAF50;          /* Xanh lá chủ đạo */
+    --green-light: #81C784;    /* Xanh lá nhạt */
+    --green-dark: #00C853;     /* Xanh lá đậm */
+    --black: #000000;          /* Đen */
+    --dark: #1a1a1a;          /* Đen nhạt */
+    --dark-gray: #2d2d2d;     /* Xám đen */
     
     /* Màu bổ sung */
     --white: #FFFFFF;
-    --dark: #2C3E50;
     --gray-light: #F5F7FA;
     --gray: #95A5A6;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --shadow-dark: rgba(0, 0, 0, 0.2);
+    --shadow: rgba(0, 0, 0, 0.15);
+    --shadow-dark: rgba(0, 0, 0, 0.3);
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--orange) 0%, var(--pink) 50%, var(--red) 100%);
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,7 +61,7 @@ body {
     top: -100px;
     left: -100px;
     animation-delay: 0s;
-    background: rgba(0, 230, 118, 0.15);
+    background: rgba(255, 215, 0, 0.1);
 }
 
 .circle2 {
@@ -74,7 +70,7 @@ body {
     bottom: -50px;
     right: -50px;
     animation-delay: 2s;
-    background: rgba(255, 107, 53, 0.15);
+    background: rgba(76, 175, 80, 0.1);
 }
 
 .circle3 {
@@ -83,7 +79,7 @@ body {
     top: 50%;
     right: 10%;
     animation-delay: 4s;
-    background: rgba(255, 77, 143, 0.15);
+    background: rgba(255, 215, 0, 0.15);
 }
 
 .circle4 {
@@ -139,12 +135,13 @@ body {
 
 /* Logo Section */
 .logo-section {
-    background: linear-gradient(135deg, var(--orange) 0%, var(--pink) 100%);
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
     padding: 40px 20px;
     text-align: center;
     color: var(--white);
     position: relative;
     overflow: hidden;
+    border-bottom: 4px solid #FFD700;
 }
 
 .logo-section::before {
@@ -170,17 +167,18 @@ body {
 .logo-circle {
     width: 100px;
     height: 100px;
-    background: var(--white);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 50px;
     margin: 0 auto 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
     position: relative;
     z-index: 1;
     animation: pulse 2s ease-in-out infinite;
+    border: 3px solid #000000;
 }
 
 @keyframes pulse {
@@ -224,10 +222,11 @@ body {
     font-size: 1.8em;
     margin-bottom: 25px;
     text-align: center;
-    background: linear-gradient(135deg, var(--orange) 0%, var(--pink) 100%);
+    background: linear-gradient(135deg, #FFD700 0%, #00C853 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    font-weight: 700;
 }
 
 /* Input Groups */
@@ -261,9 +260,9 @@ body {
 
 .input-group input:focus {
     outline: none;
-    border-color: var(--orange);
+    border-color: #FFD700;
     background: var(--white);
-    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.2);
 }
 
 .input-group input::placeholder {
@@ -291,18 +290,18 @@ body {
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: var(--orange);
+    accent-color: #FFD700;
 }
 
 .forgot-password {
-    color: var(--pink);
+    color: #00C853;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
 }
 
 .forgot-password:hover {
-    color: var(--pink-dark);
+    color: #4CAF50;
     text-decoration: underline;
 }
 
@@ -312,7 +311,7 @@ body {
 }
 
 .terms-agreement a {
-    color: var(--pink);
+    color: #00C853;
     text-decoration: none;
     font-weight: 600;
 }
@@ -356,25 +355,27 @@ body {
 }
 
 .btn-login {
-    background: linear-gradient(135deg, var(--orange) 0%, var(--pink) 100%);
-    color: var(--white);
-    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000000;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
 }
 
 .btn-login:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+    box-shadow: 0 12px 30px rgba(255, 215, 0, 0.5);
 }
 
 .btn-register {
-    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    background: linear-gradient(135deg, #4CAF50 0%, #00C853 100%);
     color: var(--white);
-    box-shadow: 0 8px 20px rgba(0, 230, 118, 0.3);
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
 }
 
 .btn-register:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 230, 118, 0.4);
+    box-shadow: 0 12px 30px rgba(76, 175, 80, 0.5);
 }
 
 .btn:active {
@@ -395,14 +396,14 @@ body {
 }
 
 .form-switch a {
-    color: var(--pink);
+    color: #FFD700;
     text-decoration: none;
     font-weight: 700;
     transition: color 0.3s ease;
 }
 
 .form-switch a:hover {
-    color: var(--pink-dark);
+    color: #FFA500;
     text-decoration: underline;
 }
 
@@ -430,12 +431,12 @@ body {
 }
 
 .toast.success {
-    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    background: linear-gradient(135deg, #4CAF50 0%, #00C853 100%);
     color: var(--white);
 }
 
 .toast.error {
-    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    background: linear-gradient(135deg, #FF5722 0%, #D32F2F 100%);
     color: var(--white);
 }
 
@@ -457,12 +458,12 @@ body {
 }
 
 .login-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 107, 53, 0.5);
+    background: rgba(255, 215, 0, 0.5);
     border-radius: 10px;
 }
 
 .login-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 107, 53, 0.8);
+    background: rgba(255, 215, 0, 0.8);
 }
 
 /* Responsive */

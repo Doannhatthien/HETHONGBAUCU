@@ -2,8 +2,14 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 require('dotenv').config();
 
-// Kết nối MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/election_db')
+// Connection URI với retry
+const MONGODB_URI = 'mongodb+srv://BauCuWeb:wpgjFkXMN1Z5EFpZ@cluster0.viv3ng4.mongodb.net/Buoi4_group12?retryWrites=true&w=majority&appName=Cluster0';
+
+// Kết nối MongoDB với timeout dài hơn
+mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 45000,
+})
     .then(() => console.log('✅ MongoDB connected'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
