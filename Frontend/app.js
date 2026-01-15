@@ -252,6 +252,74 @@ const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'; // Thay b
 // State mapping
 const STATE_NAMES = ['Thiết lập', 'Đăng ký', 'Bỏ phiếu', 'Kết thúc'];
 
+// ========== TOKEN CLASS INTEGRATION ==========
+const TOKEN_ADDRESS = "0xDa19eDBA88c1c0f81b8986270394639875148468"; // Địa chỉ contract MyToken
+const TOKEN_ABI = [
+  {"inputs":[{"internalType":"uint256","name":"initialSupply","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},
+  {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},
+  {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},
+  {"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+  {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"]
+};
+let tokenContract;
+let tokenDecimals = 18;
+
+async function loadTokenInfo(account) {
+  if (typeof window.ethereum === 'undefined') return;
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
+    tokenDecimals = await tokenContract.decimals();
+    const balance = await tokenContract.balanceOf(account);
+    document.getElementById('classBalance').innerText = ethers.utils.formatUnits(balance, tokenDecimals) + ' CLASS';
+  } catch (err) {
+    document.getElementById('classBalance').innerText = '-';
+  }
+}
+
+async function transferToken(event) {
+  event.preventDefault();
+  const recipient = document.getElementById('recipientAddress').value.trim();
+  const amount = document.getElementById('transferAmount').value.trim();
+  const msgDiv = document.getElementById('tokenMessage');
+  msgDiv.innerText = '';
+  if (!ethers.utils.isAddress(recipient)) {
+    msgDiv.innerText = 'Địa chỉ nhận không hợp lệ!';
+    return;
+  }
+  if (isNaN(amount) || Number(amount) <= 0) {
+    msgDiv.innerText = 'Số lượng phải lớn hơn 0!';
+    return;
+  }
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractWithSigner = tokenContract.connect(signer);
+    const tx = await contractWithSigner.transfer(recipient, ethers.utils.parseUnits(amount, tokenDecimals));
+    msgDiv.innerText = 'Đang gửi giao dịch...';
+    await tx.wait();
+    msgDiv.innerText = 'Chuyển CLASS thành công!';
+    msgDiv.classList.add('success');
+    loadTokenInfo(await signer.getAddress());
+    document.getElementById('transferForm').reset();
+  } catch (err) {
+    msgDiv.innerText = 'Lỗi: ' + (err.data?.message || err.message || 'Không gửi được token!');
+    msgDiv.classList.remove('success');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('transferForm');
+  if (form) form.onsubmit = transferToken;
+});
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     // Đợi một chút để đảm bảo auth.js đã load
@@ -937,4 +1005,20 @@ function showAlert(message, type) {
     setTimeout(() => {
         alertDiv.remove();
     }, 5000);
+}
+
+// Gọi hàm loadTokenInfo khi kết nối ví thành công
+async function onWalletConnected(account) {
+  await loadTokenInfo(account);
+}
+
+// Hook vào hàm connectWallet có sẵn hoặc tự động cập nhật khi đổi ví
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', function(accounts) {
+    if (accounts && accounts[0]) {
+      loadTokenInfo(accounts[0]);
+    } else {
+      document.getElementById('classBalance').innerText = '-';
+    }
+  });
 }

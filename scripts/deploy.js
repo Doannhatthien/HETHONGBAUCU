@@ -1,28 +1,18 @@
-async function main() {
-  console.log("Deploying ClassElection contract...");
+require("dotenv").config();
+const { ethers } = require("hardhat");
 
-  // Get the contract factory
-  const ClassElection = await ethers.getContractFactory("ClassElection");
-  
-  // Deploy the contract
-  const election = await ClassElection.deploy();
-  
-  // Wait for deployment to finish
-  await election.waitForDeployment();
-  
-  // Get the deployed contract address
-  const address = await election.getAddress();
-  
-  console.log("✅ ClassElection deployed to:", address);
-  console.log("\n📝 Cập nhật địa chỉ contract trong app.js:");
-  console.log(`const CONTRACT_ADDRESS = '${address}';`);
-  
-  // Get the deployer (admin) address
-  const [deployer] = await ethers.getSigners();
-  console.log("\n👤 Admin address:", deployer.address);
-  
-  console.log("\n✨ Deploy thành công!");
+async function main() {
+  const initialSupply = ethers.utils.parseEther("1000002"); // 1,000,002 tokens
+  const MyToken = await ethers.getContractFactory("MyToken");
+  const myToken = await MyToken.deploy(initialSupply);
+  await myToken.deployed();
+  console.log("MyToken deployed to:", myToken.address);
 }
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
 main()
   .then(() => process.exit(0))
