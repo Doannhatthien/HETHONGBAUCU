@@ -1,17 +1,16 @@
-require("dotenv").config();
-require("@nomiclabs/hardhat-ethers");
+import "dotenv/config";
+import "@nomiclabs/hardhat-ethers";
 
-module.exports = {
+export default {
   solidity: "0.8.27",
   networks: {
     localhost: {
       url: "http://127.0.0.1:8545"
     },
-    // XÓA hoặc COMMENT phần này nếu không dùng sepolia
-    // sepolia: {
-    //   url: process.env.ALCHEMY_SEPOLIA_URL,
-    //   accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    // },
+    sepolia: {
+      url: process.env.ALCHEMY_SEPOLIA_URL,
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    },
     cronosTestnet: {
       url: "https://evm-t3.cronos.org",
       chainId: 338,

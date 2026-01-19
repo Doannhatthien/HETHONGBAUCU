@@ -181,27 +181,8 @@ async function handleRegister(e) {
     // Giả lập độ trễ API
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Kiểm tra username đã tồn tại
+    // Cho phép đăng ký trùng username và studentId
     const users = getUsers();
-    const existingUser = users.find(u => u.username === username);
-    
-    if (existingUser) {
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-        showToast('Tên đăng nhập đã tồn tại!', 'error');
-        return;
-    }
-    
-    // Kiểm tra mã sinh viên đã tồn tại
-    const existingStudentId = users.find(u => u.studentId === studentId);
-    if (existingStudentId) {
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-        showToast('Mã sinh viên đã được đăng ký!', 'error');
-        return;
-    }
-    
-    // Tạo user mới
     const newUser = {
         id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
         username,
@@ -211,14 +192,9 @@ async function handleRegister(e) {
         role: 'student',
         createdAt: new Date().toISOString()
     };
-    
-    // Lưu user
     users.push(newUser);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    
     showToast('Đăng ký thành công! Đang chuyển sang đăng nhập...', 'success');
-    
-    // Chuyển sang form đăng nhập và điền sẵn username
     setTimeout(() => {
         switchForm('login');
         document.getElementById('loginUsername').value = username;

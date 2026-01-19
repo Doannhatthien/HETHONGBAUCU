@@ -1,3 +1,4 @@
+    event ElectionReset();
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -32,7 +33,6 @@ contract ClassElection {
     
     // Danh sách cử tri
     mapping(address => Voter) public voters;
-    address[] public voterAddresses;
     
     // Quy định chọn ban cán sự thủ công
     string[] public positions;
@@ -76,7 +76,6 @@ contract ClassElection {
         require(!voters[_voter].isRegistered, "Cu tri da duoc dang ky");
         voters[_voter].isRegistered = true;
         voters[_voter].canRegisterCandidates = true;
-        voterAddresses.push(_voter);
         emit VoterRegistered(_voter);
     }
     
@@ -87,7 +86,6 @@ contract ClassElection {
             if (!voters[_voters[i]].isRegistered) {
                 voters[_voters[i]].isRegistered = true;
                 voters[_voters[i]].canRegisterCandidates = true;
-                voterAddresses.push(_voters[i]);
                 emit VoterRegistered(_voters[i]);
             }
         }
@@ -144,18 +142,17 @@ contract ClassElection {
     }
     
     // Lấy danh sách ứng viên
-    function getCandidates() public view returns (Candidate[] memory) {
-        Candidate[] memory allCandidates = new Candidate[](candidatesCount);
-        for (uint i = 1; i <= candidatesCount; i++) {
-            allCandidates[i - 1] = candidates[i];
-        }
-        return allCandidates;
+    // Lưu ý: Trả về mảng lớn sẽ tốn gas nếu gọi từ contract khác. Nên dùng off-chain hoặc lấy từng phần tử.
+    function getCandidate(uint id) public view returns (Candidate memory) {
+        require(candidates[id].exists, "Ung vien khong ton tai");
+        return candidates[id];
     }
+    // Nếu cần tất cả ứng viên, nên dùng event CandidateRegistered để lấy off-chain.
     
     // Lấy kết quả bầu cử
-    function getResults() public view returns (Candidate[] memory) {
+    function getResults(uint id) public view returns (Candidate memory) {
         require(state == ElectionState.Ended, "Bau cu chua ket thuc");
-        return getCandidates();
+        return getCandidate(id);
     }
     
     // Lấy số lượng vị trí
@@ -175,6 +172,7 @@ contract ClassElection {
     }
     
     // Đếm tổng số phiếu bầu
+    // Lưu ý: Hàm này sẽ tốn gas nếu số lượng ứng viên lớn. Nên lấy từng ứng viên hoặc dùng event CandidateRegistered để tổng hợp off-chain.
     function getTotalVotes() public view returns (uint) {
         uint total = 0;
         for (uint i = 1; i <= candidatesCount; i++) {
@@ -190,14 +188,10 @@ contract ClassElection {
             delete candidates[i];
         }
         candidatesCount = 0;
-        
-        // Reset trạng thái cử tri
-        for (uint i = 0; i < voterAddresses.length; i++) {
-            voters[voterAddresses[i]].hasVoted = false;
-            voters[voterAddresses[i]].votedCandidateId = 0;
-        }
-        
+        // Không reset trạng thái cử tri trên chain nữa để tiết kiệm gas
+        // Có thể dùng version election hoặc deploy contract mới cho mỗi kỳ bầu cử
         state = ElectionState.Setup;
         emit ElectionStateChanged(state);
+        emit ElectionReset();
     }
 }

@@ -165,6 +165,23 @@
                         <button onclick="endElection()" class="btn btn-danger">
                             🏁 Kết thúc bầu cử
                         </button>
+                        <button onclick="resetElection()" class="btn btn-warning">
+                            ♻️ Reset hệ thống
+                        </button>
+                        <script>
+                        async function resetElection() {
+                            if (!window.contract || !window.userAccount) return;
+                            if (!confirm('Bạn có chắc muốn reset hệ thống?\nTất cả dữ liệu ứng viên, cử tri, phiếu bầu sẽ bị xóa!')) return;
+                            try {
+                                await window.contract.methods.resetElection().send({ from: window.userAccount });
+                                alert('✅ Đã reset hệ thống!');
+                                await loadElectionData();
+                            } catch (error) {
+                                alert('Lỗi: ' + error.message);
+                            }
+                        }
+                        window.resetElection = resetElection;
+                        </script>
                     </div>
                 </div>
                 
@@ -238,7 +255,7 @@
         // KHÔNG DÙNG app.js NỮA - NHÚNG CODE TRỰC TIẾP
         let web3, contract, userAccount, isAdmin = false;
         
-        const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+        const CONTRACT_ADDRESS = '0x3Ef98db51C49080B3D615f79A64ce798711BA9f4';
         const CONTRACT_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"candidateId","type":"uint256"},{"indexed":false,"internalType":"string","name":"name","type":"string"},{"indexed":false,"internalType":"string","name":"position","type":"string"}],"name":"CandidateRegistered","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"enum ClassElection.ElectionState","name":"newState","type":"uint8"}],"name":"ElectionStateChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"candidateId","type":"uint256"}],"name":"Voted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"voter","type":"address"}],"name":"VoterRegistered","type":"event"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_position","type":"string"}],"name":"addCandidate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"_position","type":"string"}],"name":"addPosition","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"candidates","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"position","type":"string"},{"internalType":"uint256","name":"voteCount","type":"uint256"},{"internalType":"bool","name":"exists","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"candidatesCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"endElection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getCandidates","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"position","type":"string"},{"internalType":"uint256","name":"voteCount","type":"uint256"},{"internalType":"bool","name":"exists","type":"bool"}],"internalType":"struct ClassElection.Candidate[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getPosition","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getPositionsCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getResults","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"position","type":"string"},{"internalType":"uint256","name":"voteCount","type":"uint256"},{"internalType":"bool","name":"exists","type":"bool"}],"internalType":"struct ClassElection.Candidate[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTotalVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"positions","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_position","type":"string"}],"name":"registerCandidate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_voter","type":"address"}],"name":"registerVoter","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"_voters","type":"address[]"}],"name":"registerVoters","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"resetElection","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"startRegistration","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"startVoting","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"state","outputs":[{"internalType":"enum ClassElection.ElectionState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_candidateId","type":"uint256"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"voterAddresses","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"isRegistered","type":"bool"},{"internalType":"bool","name":"hasVoted","type":"bool"},{"internalType":"uint256","name":"votedCandidateId","type":"uint256"},{"internalType":"bool","name":"canRegisterCandidates","type":"bool"}],"stateMutability":"view","type":"function"}];
         
         // Connect MetaMask
@@ -253,36 +270,36 @@
                     return;
                 }
                 
-                // Thêm/chuyển sang mạng Hardhat Local
+                // Chuyển sang mạng Cronos Testnet
+                const CRONOS_PARAMS = {
+                    chainId: '0x152', // 338 in hex
+                    chainName: 'Cronos Testnet',
+                    nativeCurrency: {
+                        name: 'TCRO',
+                        symbol: 'TCRO',
+                        decimals: 18
+                    },
+                    rpcUrls: ['https://evm-t3.cronos.org'],
+                    blockExplorerUrls: ['https://explorer.cronos.org/testnet']
+                };
                 try {
                     await window.ethereum.request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x7A69' }], // 31337 in hex
+                        params: [{ chainId: CRONOS_PARAMS.chainId }],
                     });
                 } catch (switchError) {
-                    // Nếu mạng chưa được thêm, thêm mới
                     if (switchError.code === 4902) {
                         try {
                             await window.ethereum.request({
                                 method: 'wallet_addEthereumChain',
-                                params: [{
-                                    chainId: '0x7A69',
-                                    chainName: 'Hardhat Local',
-                                    nativeCurrency: {
-                                        name: 'Ether',
-                                        symbol: 'ETH',
-                                        decimals: 18
-                                    },
-                                    rpcUrls: ['http://127.0.0.1:8545'],
-                                    blockExplorerUrls: null
-                                }]
+                                params: [CRONOS_PARAMS]
                             });
                         } catch (addError) {
-                            alert('❌ Không thể thêm mạng Hardhat Local!\n\nVui lòng thêm thủ công:\nRPC URL: http://127.0.0.1:8545\nChain ID: 31337');
+                            alert('❌ Không thể thêm mạng Cronos Testnet!\n\nVui lòng thêm thủ công:\nRPC URL: https://evm-t3.cronos.org\nChain ID: 338');
                             return;
                         }
                     } else {
-                        alert('❌ Không thể chuyển sang mạng Hardhat Local!\n\n' + switchError.message);
+                        alert('❌ Không thể chuyển sang mạng Cronos Testnet!\n\n' + switchError.message);
                         return;
                     }
                 }

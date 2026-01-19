@@ -1,7 +1,9 @@
 // API Configuration
+
+// Sửa lại cổng backend thành 5001 cho đúng với server đang chạy
 const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api'
-    : `http://${window.location.hostname}:5000/api`;
+    ? 'http://localhost:5001/api'
+    : `http://${window.location.hostname}:5001/api`;
 
 // Khởi tạo
 document.addEventListener('DOMContentLoaded', function() {
